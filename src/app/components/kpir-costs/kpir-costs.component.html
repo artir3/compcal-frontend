@@ -1,0 +1,125 @@
+<h1 class="title">Ewidencja kosztów
+  <hr>
+</h1>
+
+<form [formGroup]="kpir" novalidate (ngSubmit)="save(kpir.value, kpir.valid)">
+  <mat-card class="container">
+    <mat-card-header>
+      <mat-card-title>Ewidencja z dnia {{kpir.value.economicEventDate | date: 'dd-MM-yyyy'}} o numerze
+        {{kpir.value.idx}}</mat-card-title>
+    </mat-card-header>
+
+    <mat-card-content>
+      <mat-form-field class="form-field">
+        <input matInput [matDatepicker]="economicEvent" placeholder="Data zdarzenia gospodarczego" formControlName="economicEventDate"
+          (click)="economicEvent.open()">
+        <mat-datepicker-toggle matSuffix [for]="economicEvent"></mat-datepicker-toggle>
+        <mat-datepicker #economicEvent></mat-datepicker>
+        <mat-error *ngIf="kpir.controls['economicEventDate'].hasError('required')">
+          Proszę opis zdarzenia gospodarczego.
+        </mat-error>
+      </mat-form-field>
+      <mat-card-content>
+        <mat-select class="form-field" placeholder="Wybierz kontrahenta" formControlName="contractor"
+          [errorStateMatcher]="matcher">
+          <mat-option *ngFor="let contr of contractors" [value]="contr.id">
+            {{contr.company}}
+          </mat-option>
+        </mat-select>
+        <mat-error *ngIf="kpir.controls['contractor'].hasError('required')">
+          Proszę wybrać kontrahenta.
+        </mat-error>
+      </mat-card-content>
+      <mat-form-field class="form-field">
+        <input matInput placeholder="Nr dowodu księgowego" formControlName="registrationNumber" [errorStateMatcher]="matcher">
+        <mat-error *ngIf="kpir.controls['registrationNumber'].hasError('required')">
+          Proszę nr dowodu księgowego.
+        </mat-error>
+      </mat-form-field>
+      <mat-form-field class="form-field">
+        <input matInput placeholder="Opis zdarzenia gospodarczego" formControlName="description" [errorStateMatcher]="matcher">
+        <mat-error *ngIf="kpir.controls['description'].hasError('required')">
+          Proszę opis zdarzenia gospodarczego.
+        </mat-error>
+      </mat-form-field>
+      <mat-form-field class="form-field">
+        <input matInput placeholder="Zakup towarów handlowych i materiałów handlowych wg. cen zukupu" type="number"
+          formControlName="purchaseCosts" [errorStateMatcher]="matcher">
+      </mat-form-field>
+      <mat-form-field class="form-field">
+        <input matInput placeholder="Koszty uboczne zakupu" type="number" formControlName="purchaseSideCosts"
+          [errorStateMatcher]="matcher">
+      </mat-form-field>
+      <mat-form-field class="form-field">
+        <input matInput placeholder="Wydatki - wynagrodzenie w gotówce i w naturze" type="number" formControlName="paymentCost"
+          [errorStateMatcher]="matcher">
+      </mat-form-field>
+      <mat-form-field class="form-field">
+        <input matInput placeholder="Wydatki - pozostałe wydatki" type="number" formControlName="otherCosts"
+          [errorStateMatcher]="matcher">
+      </mat-form-field>
+
+      <div>
+        <p>Wydatki - Wydatki razem: {{calculateSumCosts()}}</p>
+      </div>
+
+      <mat-form-field class="form-field">
+        <input matInput placeholder="Wydatki - różne" type="number" formControlName="other" [errorStateMatcher]="matcher">
+      </mat-form-field>
+
+      <div>
+        <p>Koszty działalności badawczo-rozwojowej o których mowa w art. 26c ustawy o podatku dochodowym</p>
+      </div>
+
+      <mat-form-field class="form-field">
+        <input matInput placeholder="Koszty działalności badawczo-rozwojowej - opis kosztu" formControlName="radDescription"
+          [errorStateMatcher]="matcher">
+      </mat-form-field>
+
+      <mat-form-field class="form-field">
+        <input matInput placeholder="Koszty działalności badawczo-rozwojowej - wartość" type="number" formControlName="radCosts"
+          [errorStateMatcher]="matcher">
+      </mat-form-field>
+
+      <mat-form-field class="form-field">
+        <mat-select placeholder="Wybierz walutę płatności ewidencji" formControlName="currency" [errorStateMatcher]="matcher">
+          <mat-option value="PLN">PLN</mat-option>
+          <mat-option value="EUR">Euro</mat-option>
+          <mat-option value="USD">Dolar amerykański</mat-option>
+          <mat-option value="GBP">Funt szterling</mat-option>
+        </mat-select>
+        <mat-error *ngIf="kpir.controls['currency'].hasError('required')">Musisz wybrać walutę w której została opłacona ewidencja</mat-error>
+      </mat-form-field>
+
+      <mat-checkbox formControlName="payed">Czy opacono ewidencję?</mat-checkbox>
+
+      <mat-form-field class="form-field">
+        <input matInput [max]="kpir.value.paymentDateMax" [matDatepicker]="paymentDateMinEvent" placeholder="Terminowa data patności"
+          formControlName="paymentDateMin" (click)="paymentDateMinEvent.open()">
+        <mat-datepicker-toggle matSuffix [for]="paymentDateMinEvent"></mat-datepicker-toggle>
+        <mat-datepicker #paymentDateMinEvent></mat-datepicker>
+        <mat-error *ngIf="kpir.controls['paymentDateMin'].hasError('required')">
+          Proszę opis zdarzenia gospodarczego.
+        </mat-error>
+      </mat-form-field>
+      <mat-form-field class="form-field">
+        <input matInput [min]="kpir.value.paymentDateMin" [matDatepicker]="paymentDateMaxEvent" placeholder="Ostateczna data płatności"
+          formControlName="paymentDateMax" (click)="paymentDateMaxEvent.open()">
+        <mat-datepicker-toggle matSuffix [for]="paymentDateMaxEvent"></mat-datepicker-toggle>
+        <mat-datepicker #paymentDateMaxEvent></mat-datepicker>
+        <mat-error *ngIf="kpir.controls['paymentDateMax'].hasError('required')">
+          Proszę opis zdarzenia gospodarczego.
+        </mat-error>
+      </mat-form-field>
+      <mat-form-field class="form-field">
+        <input matInput placeholder="Uwagi" formControlName="comments" [errorStateMatcher]="matcher">
+      </mat-form-field>
+    </mat-card-content>
+    <mat-card-actions>
+      <div mat-dialog-actions class="submit-button">
+        <button mat-raised-button color="primary" [disabled]="!kpir.valid" type="submit">Zapisz</button>
+        <button mat-raised-button color="warn" [routerLink]="[ '/kpir/costs']" type="button">Anuluj</button>
+      </div>
+    </mat-card-actions>
+  </mat-card>
+</form>

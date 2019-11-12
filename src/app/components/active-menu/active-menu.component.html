@@ -1,0 +1,11 @@
+<div class="menu">
+  <button *ngIf="isLogged()" mat-raised-button class="menu-button" [routerLink]="['/kpir/income']" type="button">Przychody</button>
+  <button *ngIf="isLogged()" mat-raised-button class="menu-button" [routerLink]="['/kpir/costs']" type="button">Rozchody</button>
+  <button *ngIf="isLogged()" mat-raised-button class="menu-button" [routerLink]="['/kpir/printer']" type="button">Wydruk</button>
+  <button *ngIf="isLogged()" mat-raised-button class="menu-button" [routerLink]="['/contractors']" type="button">Kontrahenci</button>
+  <button mat-raised-button class="menu-button" [routerLink]="['/legal']" type="button">Podstawa prawna</button>
+  <button mat-raised-button class="menu-button" [routerLink]="['/about']" type="button">O serwisie</button>
+  <button *ngIf="isLogged()" mat-raised-button class="menu-button" [routerLink]="['/settings']" type="button">Ustawienia</button>
+  <button *ngIf="isLogged()" mat-raised-button class="menu-button" (click)="openLogout()">Wyloguj</button>
+  <button *ngIf="!isLogged()" mat-raised-button class="menu-button" [routerLink]="['/login']" type="button">Zaloguj</button>
+</div>

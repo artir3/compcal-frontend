@@ -1,0 +1,135 @@
+<h1 class="title">Rejestracja nowego użytkownika
+  <hr>
+</h1>
+
+<mat-card class="container">
+  <form>
+    <mat-card-header>
+      <mat-card-title>Dane do logowania</mat-card-title>
+    </mat-card-header>
+    <mat-card-content>
+
+      <hr>
+      <mat-form-field class="form-field">
+        <input matInput placeholder="Email" [formControl]="email" [errorStateMatcher]="matcher">
+        <mat-error *ngIf="email.hasError('email') && !email.hasError('required')">
+          Proszę wpisać poprawny adres email.
+        </mat-error>
+        <mat-error *ngIf="email.hasError('required')">
+          Email jest wymagany.
+        </mat-error>
+      </mat-form-field>
+
+      <mat-form-field class="form-field">
+        <input matInput placeholder="Hasło" [type]="'password'" [formControl]="password" [errorStateMatcher]="matcher">
+        <mat-error *ngIf="password.hasError('password') && !password.hasError('required')">
+          Wpisz poprawne hasło
+        </mat-error>
+        <mat-error *ngIf="password.hasError('required')">
+          Hasło jest wymagane
+        </mat-error>
+      </mat-form-field>
+
+      <mat-form-field class="form-field">
+        <input matInput placeholder="Powtórz hasło" [type]="'password'" [formControl]="repeatPassword"
+          [errorStateMatcher]="matcher">
+        <mat-error *ngIf="repeatPassword.hasError('password') && !repeatPassword.hasError('required')">
+          Wpisz poprawne hasło
+        </mat-error>
+        <mat-error *ngIf="password.hasError('required')">
+          Powtórzenie hasła jest wymagane
+        </mat-error>
+      </mat-form-field>
+
+
+      <mat-card-header>
+        <mat-card-title>Dane firmy</mat-card-title>
+      </mat-card-header>
+      <hr>
+
+      <mat-form-field class="form-field">
+        <input matInput placeholder="Imię właściciela" [formControl]="name">
+      </mat-form-field>
+
+      <mat-form-field class="form-field">
+        <input matInput placeholder="Nazwisko właściciela" [formControl]="surname">
+      </mat-form-field>
+
+      <mat-form-field class="form-field">
+        <input matInput placeholder="Nazwa firmy" [formControl]="company" [errorStateMatcher]="matcher">
+        <mat-error *ngIf="company.hasError('required')">
+          Proszę wpisać nazwę firmy.
+        </mat-error>
+      </mat-form-field>
+
+      <mat-form-field class="form-field">
+        <input matInput placeholder="Numer nip firmy" [formControl]="nip" [errorStateMatcher]="matcher">
+        <mat-error *ngIf="nip.hasError('required')">
+          Proszę wpisać numer nip.
+        </mat-error>
+      </mat-form-field>
+
+      <mat-form-field class="form-field">
+        <input matInput placeholder="Ulica" [formControl]="street" [errorStateMatcher]="matcher">
+        <mat-error *ngIf="street.hasError('required')">
+          Proszę wpisać ulicę.
+        </mat-error>
+      </mat-form-field>
+
+      <div class="max-width">
+        <mat-form-field class="parcel-field">
+          <input matInput placeholder="Numer domu" [formControl]="parcelNo" [errorStateMatcher]="matcher">
+          <mat-error *ngIf="parcelNo.hasError('required')">
+            Proszę wpisać numer domu.
+          </mat-error>
+        </mat-form-field>
+
+        <label>/</label>
+
+        <mat-form-field class="home-field">
+          <input matInput placeholder="Numer mieszkania" [formControl]="homeNo" [errorStateMatcher]="matcher">
+          <mat-error *ngIf="homeNo.hasError('required')">
+            Proszę wpisać numer mieszkania.
+          </mat-error>
+        </mat-form-field>
+      </div>
+      <div class="max-width">
+        <mat-form-field class="zip-field">
+          <input matInput placeholder="Kod pocztowy" [formControl]="zip" [errorStateMatcher]="matcher">
+          <mat-error *ngIf="zip.hasError('required')">
+            Proszę wpisać kod pocztowy.
+          </mat-error>
+        </mat-form-field>
+
+        <label>,</label>
+
+        <mat-form-field class="city-field">
+          <input matInput placeholder="Miasto" [formControl]="city" [errorStateMatcher]="matcher">
+          <mat-error *ngIf="city.hasError('required')">
+            Proszę wpisać miasto.
+          </mat-error>
+        </mat-form-field>
+      </div>
+
+      <mat-card-header>
+        <mat-card-title>Forma opodatkowania</mat-card-title>
+      </mat-card-header>
+      <hr>
+
+      <mat-form-field class="form-field">
+        <mat-select placeholder="Wybierz formę opodatkowania" [formControl]="taxForm" [errorStateMatcher]="matcher">
+          <mat-option value="GENERAL_RULES_TAX_SCALE">Zasady ogólne - skala podatkowa</mat-option>
+          <mat-option value="GENERAL_RULES_FLAT_TAX">Zasady ogólne - podatek liniowy</mat-option>
+          <mat-option value="LUMP_SUM_REGISTRED_INCOME" disabled>Ryczałt od dochodów ewidencjonowanych</mat-option>
+          <mat-option value="TAX_CARD" disabled>Karta podatkowa</mat-option>
+        </mat-select>
+        <mat-error *ngIf="taxForm.hasError('required')">Musisz wybrać formę opodatkowania</mat-error>
+      </mat-form-field>
+    </mat-card-content>
+
+  </form>
+  <mat-card-actions class="buttons-panel">
+    <button mat-raised-button color="primary" class="button" (click)="register()">Zarejestruj</button>
+    <button mat-raised-button color="primary" class="button" (click)="back()">Anuluj</button>
+  </mat-card-actions>
+</mat-card>

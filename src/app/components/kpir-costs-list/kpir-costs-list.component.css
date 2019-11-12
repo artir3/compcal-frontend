@@ -1,0 +1,64 @@
+
+table th {
+    text-align: center;
+    margin-left: auto;
+    margin-right: auto;
+  }
+  
+  .text-center {
+    text-align: center;
+  }
+  
+  .table {
+    width: 100%;
+  }
+  
+  .filter {
+    width: 80%;
+    padding: 20px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+  
+  .mat-card-header > mat-card-header-text {
+    width: 100%;
+    text-align: center;
+  }
+  
+  .filter-forms, .mat-checkbox-layout {
+    width: 100%;
+  }
+  
+  mat-form-field, mat-checkbox {
+    margin-right: 20px;
+    width: 250px;
+  }
+  
+  .new-contractor-button {
+    float: right;
+    width: 250px;
+    margin: 10px;
+  }
+  
+  .content {
+    width: 90%;
+    margin-left: auto;
+    margin-right: auto;
+  }
+  
+  .text-headers {
+    width: 200px;
+    margin-bottom: 15px;
+    max-width: 300px;
+    padding: 0px 5px 5px 0px;
+  }
+
+  .text-headers-mid {
+    width: 150px;
+    margin-bottom: 15px;
+    max-width: 200px;
+    padding: 0px 5px 5px 0px;
+  }
+  .mat-footer-cell {
+    margin: 10px 0 0 10px
+  }

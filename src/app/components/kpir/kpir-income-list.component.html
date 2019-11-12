@@ -1,0 +1,147 @@
+<h1 class="title" sticky>Księga przychodów i rozchodów - przychody
+    <hr>
+</h1>
+
+
+<form [formGroup]="kpirFilter" class="filter" novalidate (ngSubmit)="doFilter(kpirFilter.value)">
+    <mat-card class="filter-forms">
+        <mat-card-header>
+            <mat-card-title>Filtrowanie</mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+            <mat-form-field>
+                <mat-select placeholder="Wybierz rok rozliczeniowy" formControlName="selectedYear" (selectionChange)="changeYear()">
+                    <mat-option></mat-option>
+                    <mat-option *ngFor="let year of years" [value]="year">{{year}}</mat-option>
+                </mat-select>
+            </mat-form-field>
+
+            <mat-form-field>
+                <mat-select placeholder="Wybierz miesiąc rozliczeniowy" formControlName="selectedMonth">
+                    <mat-option *ngIf="checkSelectedYear()" [value]="null">wybierz najpierw rok</mat-option>
+                    <mat-option *ngIf="!checkSelectedYear()" [value]="null">-- anuluj --</mat-option>
+                    <mat-option *ngFor="let month of months" [value]="month.no">{{month.name}}</mat-option>
+                    <mat-option *ngIf="!checkSelectedYear()" [value]="null">-- anuluj --</mat-option>
+                </mat-select>
+            </mat-form-field>
+
+            <mat-form-field>
+                <input matInput [min]="economicEventMinDate" [max]="economicEventMaxDate" [matDatepicker]="economicEvent"
+                    placeholder="Data zdarzenia gospodarczego" formControlName="economicEventDate" (click)="economicEvent.open()">
+                <mat-datepicker-toggle matSuffix [for]="economicEvent"></mat-datepicker-toggle>
+                <mat-datepicker #economicEvent></mat-datepicker>
+            </mat-form-field>
+
+            <mat-form-field>
+                <input matInput placeholder="Nazwa kontrahenta" formControlName="company">
+            </mat-form-field>
+
+            <mat-form-field>
+                <input matInput placeholder="Nip kontrahenta" type="number" formControlName="nip">
+            </mat-form-field>
+
+            <mat-form-field>
+                <input matInput placeholder="Numer dowodu księgowego" formControlName="registrationNumber">
+            </mat-form-field>
+
+            <mat-checkbox formControlName="isPayed">Pokaź opłacone</mat-checkbox>
+            <mat-checkbox formControlName="notPayed">Pokaź nieopłacone</mat-checkbox>
+            <mat-checkbox formControlName="overdue">Pokaź po terminie płatności</mat-checkbox>
+        </mat-card-content>
+        <mat-card-actions>
+            <div mat-dialog-actions class="submit-button">
+                <button mat-raised-button color="primary" type="submit">Filtruj</button>
+            </div>
+        </mat-card-actions>
+    </mat-card>
+</form>
+
+
+<mat-card class="content">
+    <button mat-raised-button color="primary" class="button new-contractor-button" [routerLink]="['/kpir/income/add']">Dodaj
+        ewidencję przychodów</button>
+    <table mat-table class="table" [dataSource]="dataSource" matSort>
+        <!-- 1 -->
+        <ng-container matColumnDef="idx">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header rowspan="2">Lp.</th>
+            <td mat-cell *matCellDef="let element">{{element.idx}}</td>
+            <td mat-footer-cell *matFooterCellDef></td>
+        </ng-container>
+        <!-- 2 -->
+        <ng-container matColumnDef="economicEventDate">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header rowspan="2">Data<br>zdarzenia<br>gospodarczego</th>
+            <td mat-cell *matCellDef="let element">{{element.economicEventDate | date: 'dd-MM-yyyy'}}</td>
+            <td mat-footer-cell *matFooterCellDef></td>
+        </ng-container>
+        <!-- 3 -->
+        <ng-container matColumnDef="registrationNumber">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header rowspan="2">Numer<br>dowodu<br>księgowego</th>
+            <td mat-cell *matCellDef="let element">{{element.registrationNumber}}</td>
+            <td mat-footer-cell *matFooterCellDef></td>
+        </ng-container>
+        <!-- t1 -->
+        <ng-container matColumnDef="consumer">
+            <th mat-header-cell *matHeaderCellDef colspan="1">kontrahent</th>
+        </ng-container>
+        <!-- 4 -->
+        <ng-container matColumnDef="fullName">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header class="text-headers">imię i nazwisko (firma)<br>adres</th>
+            <td mat-cell *matCellDef="let element">{{element.fullName}}<br>{{element.address}}</td>
+            <td mat-footer-cell *matFooterCellDef></td>
+        </ng-container>
+        <!-- 6 -->
+        <!-- <ng-container matColumnDef="description">
+            <th mat-header-cell *matHeaderCellDef class="text-headers" rowspan="2">Opis<br>zdarzenia<br>gospodarczego</th>
+            <td mat-cell *matCellDef="let element">{{element.description}}</td>
+            <td mat-footer-cell *matFooterCellDef> Suma bierzącej strony<br>
+                <hr>Razem od początku {{ getName() }} </td>
+        </ng-container> -->
+        <!-- t2 -->
+        <ng-container matColumnDef="income">
+            <th mat-header-cell *matHeaderCellDef colspan="3">Przychód</th>
+        </ng-container>
+        <!-- 7 -->
+        <ng-container matColumnDef="soldIncome">
+            <th mat-header-cell *matHeaderCellDef>wartość<br>sprzedanych<br>towarów<br>i usług</th>
+            <td mat-cell *matCellDef="let element" class="text-center">{{element.soldIncome | number:'.2-2'}}</td>
+            <td mat-footer-cell *matFooterCellDef class="text-center">{{getPagedSoldIncome() | number:'.2-2'}}<br>
+                <hr>{{getSoldIncome() | number:'.2-2'}}</td>
+        </ng-container>
+        <!-- 8 -->
+        <ng-container matColumnDef="otherIncome">
+            <th mat-header-cell *matHeaderCellDef>pozostałe<br>przychody</th>
+            <td mat-cell *matCellDef="let element" class="text-center">{{element.otherIncome | number:'.2-2'}}</td>
+            <td mat-footer-cell *matFooterCellDef class="text-center">{{getPagedOtherIncome() | number:'.2-2'}}<br>
+                <hr>{{getOtherIncome() | number:'.2-2'}}</td>
+        </ng-container>
+        <!-- 9 -->
+        <ng-container matColumnDef="allIncome">
+            <th mat-header-cell *matHeaderCellDef>razem<br>przychód</th>
+            <td mat-cell *matCellDef="let element" class="text-center">{{element.allIncome | number:'.2-2'}}</td>
+            <td mat-footer-cell *matFooterCellDef class="text-center">{{getPagedAllIncome() | number:'.2-2'}}<br>
+                <hr>{{getAllIncome() | number:'.2-2'}}</td>
+        </ng-container>
+        <!-- 17 -->
+        <!-- <ng-container matColumnDef="comments">
+            <th mat-header-cell *matHeaderCellDef class="text-headers" rowspan="2">Uwagi</th>
+            <td mat-cell *matCellDef="let element">{{element.comments}}</td>
+            <td mat-footer-cell *matFooterCellDef></td>
+        </ng-container> -->
+        <!-- akcje -->
+        <ng-container matColumnDef="actions">
+            <th mat-header-cell *matHeaderCellDef rowspan="2">Akcje</th>
+            <td mat-cell style="background-color: white;" *matCellDef="let element" class="text-center">
+                <mat-icon mat-flat-button color="primary" matTooltip="Edytuj przychód" (click)="edit(element)">edit</mat-icon>
+                <mat-icon mat-flat-button color="warn"  matTooltip="Usuń przychód" (click)="delete(element)">delete</mat-icon>
+            </td>
+            <td mat-footer-cell *matFooterCellDef></td>
+        </ng-container>
+
+        <tr mat-header-row *matHeaderRowDef="headerFirstLine sticky: true"></tr>
+        <tr mat-header-row *matHeaderRowDef="headerSecondLine sticky: true"></tr>
+        <tr mat-row [class.payed]="element.payed" [class.overdue]="element.overduePayment" [class.deleted]="element.type=='DELETED'" *matRowDef="let element; columns: columns;"></tr>
+        <tr mat-footer-row *matFooterRowDef="columns; sticky: true"></tr>
+    </table>
+
+    <mat-paginator #paginator [pageSizeOptions]="[5, 10, 25, 100]"></mat-paginator>
+</mat-card>

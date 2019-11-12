@@ -1,0 +1,48 @@
+<h1 class="title" sticky>Księga przychodów i rozchodów - wydruk
+    <hr>
+</h1>
+
+<form [formGroup]="kpirFilter" class="filter" novalidate>
+    <mat-card class="filter-forms">
+        <mat-card-header>
+            <mat-card-title>Wydruk do pdf księgi przychodów i rozchodów</mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+            <mat-form-field>
+                <mat-select placeholder="Wybierz rok rozliczeniowy" formControlName="selectedYear">
+                    <mat-option></mat-option>
+                    <mat-option *ngFor="let year of years" [value]="year">{{year}}</mat-option>
+                </mat-select>
+            </mat-form-field>
+
+            <mat-form-field>
+                <input matInput [min]="economicEventMinDate" [max]="economicEventMaxDate" [matDatepicker]="economicEvent"
+                    placeholder="Data zdarzenia gospodarczego" formControlName="economicEventDate" (click)="economicEvent.open()">
+                <mat-datepicker-toggle matSuffix [for]="economicEvent"></mat-datepicker-toggle>
+                <mat-datepicker #economicEvent></mat-datepicker>
+            </mat-form-field>
+
+            <mat-form-field>
+                <input matInput placeholder="Nazwa kontrahenta" formControlName="company">
+            </mat-form-field>
+
+            <mat-form-field>
+                <input matInput placeholder="Nip kontrahenta" type="number" formControlName="nip">
+            </mat-form-field>
+
+            <mat-checkbox formControlName="isPayed">Pokaź opłacone</mat-checkbox>
+            <mat-checkbox formControlName="notPayed">Pokaź nieopłacone</mat-checkbox>
+            <mat-checkbox formControlName="overdue">Pokaź po terminie płatności</mat-checkbox>
+        </mat-card-content>
+        <mat-card-actions>
+            <div mat-dialog-actions class="submit-button">
+                <button mat-raised-button color="primary" type="button" (click)="showFile(kpirFilter.value)">Wyświetl pdf</button>
+                <button mat-raised-button color="primary" type="button" (click)="sendMail(kpirFilter.value)">Wyślij na email</button>
+            </div>
+        </mat-card-actions>
+    </mat-card>
+</form>
+
+<mat-card *ngIf="pdfFile!=null" class="content">
+    <object [attr.data]="pdfFile" type="application/pdf" width="100%" height="100%"></object>
+</mat-card>

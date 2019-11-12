@@ -1,0 +1,31 @@
+<h1 class="title">Logowanie
+  <hr>
+</h1>
+
+<div class="container">
+  <form>
+    <mat-form-field class="form-field">
+      <input matInput placeholder="Email" [formControl]="email"
+             [errorStateMatcher]="matcher">
+      <mat-error *ngIf="email.hasError('email') && !email.hasError('required')">
+        Proszę wpisać poprawny adres email.
+      </mat-error>
+      <mat-error *ngIf="email.hasError('required')">
+        Email jest wymagany.
+      </mat-error>
+    </mat-form-field>
+
+    <mat-form-field class="form-field">
+      <input matInput placeholder="Hasło" [type]="'password'" 
+            [formControl]="password" [errorStateMatcher]="matcher">
+      <mat-error *ngIf="password.hasError('required')">
+        Hasło jest wymagane.
+      </mat-error>
+    </mat-form-field>
+  </form>
+  <div class="buttons-panel">
+      <button mat-raised-button color="primary" class="button" (click)="login()">Zaloguj</button>
+      <button mat-raised-button color="primary" class="button" (click)="register()">Zarejestruj</button>
+  </div>
+  <div *ngIf="error" class="alert alert-danger">{{error}}</div>
+</div>

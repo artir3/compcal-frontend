@@ -1,0 +1,85 @@
+.toolbar {
+  justify-content: space-between;
+}
+
+h1 {
+  text-align: center;
+}
+
+h3 {
+  text-align: center;
+}
+
+h1 > hr {
+  width: 80%;
+  margin: auto;
+
+}
+
+h3 > hr {
+  width: 90%;
+}
+
+.container {
+  margin: 0% auto 5% auto;
+  vertical-align: middle;
+  width: 60%;
+}
+
+.form-field{
+  display: inline;
+}
+
+.buttons-panel{
+  width: 100%;
+  margin-bottom: 10px;
+  margin-top: 5%;
+}
+
+button {
+  width: 30%;
+  margin: 0% 10% 0% 10%;
+}
+
+.max-width{
+  width: 100%
+}
+
+.no-margin {
+  margin: 0px;
+}
+
+.no-padding {
+  padding: 0px;
+}
+
+.about-us-button {
+  width: 100px;
+}
+
+/* .submit-button {
+  display: flex;
+  width: 50%;
+  align-items: center;
+  justify-content: center;
+} */
+
+
+.overdue  {
+  background-color: #FA5858;
+}
+.creditor {
+  background-color: rgb(96, 148, 245);
+}
+.payed {
+  background-color: rgb(125, 209, 108);
+}
+.debtor{
+  background-color: #FA5858;
+}
+.our-overdue  {
+  background-color: rgb(96, 148, 245);
+}
+.deleted {
+  background-color: rgb(46, 46, 46);
+}

@@ -1,0 +1,21 @@
+<div class="container">
+  <h1 class="title" sticky>Aktywacja konta
+    <hr>
+  </h1>
+</div>
+
+<mat-card class="content">
+  <mat-card-content>
+    <div class="authorizedText">
+      <p *ngIf="autorized==null">Prosimy chwilę poczekać.</p>
+      <p *ngIf="autorized">Dziękujemy za rejestrację w naszym serwisie, teraz możesz się już zalogować do systemu.</p>
+      <p *ngIf="autorized!=null && !autorized">Niestety, nie można było dokończyć rejestracji. Proszę sprawdzić czy
+        wprowadzony link jest porpawny. </p>
+    </div>
+  </mat-card-content>
+  <mat-card-actions>
+    <div class="button">
+      <button mat-raised-button [routerLink]="['/login']" color="primary" type="button">Przejdź do strony logowania</button>
+    </div>
+  </mat-card-actions>
+</mat-card>

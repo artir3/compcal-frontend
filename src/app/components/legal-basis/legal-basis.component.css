@@ -1,0 +1,35 @@
+.title {
+    text-align: center;
+    width: 70%;
+    padding: 20px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.content {
+    width: 60%;
+    margin-left: auto;
+    margin-right: auto;
+}  
+
+.card {
+    margin: 10px;
+    width: 200px;
+    height: 200px;
+}
+
+.cards {
+    display:inline-block;
+}
+
+.article {
+    height: 100px;
+}
+.button {
+    margin-left: 40px;
+    /* margin-right: auto; */
+    width: 60%;
+}
+.a {
+    padding: 0px 0px 0px 0px ;
+}

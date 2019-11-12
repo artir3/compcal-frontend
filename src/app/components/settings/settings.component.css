@@ -1,0 +1,36 @@
+.parcel-field {
+  width: 45%;
+  padding-right: 4%
+}
+
+.home-field {
+  width: 45%;
+  float: right;
+}
+
+.zip-field {
+  width: 30%;
+}
+
+.city-field {
+  width: 65%;
+  float: right;
+}
+
+.my-mat-card-title {
+  width: 100%;
+  text-align: center;
+}
+
+.new-account-button {
+  float: right;
+  margin-right: 0%;
+  margin-bottom: 10px;
+}
+
+.submit-button {
+  display: flex;
+  width: 50%;
+  align-items: center;
+  justify-content: center;
+}

@@ -1,0 +1,18 @@
+.parcel-field {
+    width: 45%;
+    padding-right: 4%
+}
+
+.home-field {
+    width: 45%;
+    float: right;
+}
+
+.zip-field {
+    width: 30%;
+}
+
+.city-field {
+    width: 65%;
+    float: right;
+}

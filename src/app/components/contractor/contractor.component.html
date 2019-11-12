@@ -1,0 +1,153 @@
+<h1 class="title">{{ title }}
+  <hr>
+</h1>
+
+<div class="content">
+  <mat-card class="card" *ngIf="contractor.value.creditor==true">
+    <mat-card-header>
+      <mat-card-title>
+        <h1>Uwaga<hr>Kontrahent jest wierzycielem na kwotę
+          {{contractor.value.creditorAmount}} zł</h1>
+      </mat-card-title>
+    </mat-card-header>
+  </mat-card>
+
+  <mat-card class="card" *ngIf="contractor.value.debtor==true">
+    <mat-card-header>
+      <mat-card-title>
+        <h1>Uwaga<hr>Kontrahent jest dłużnikiem na kwotę
+          {{contractor.value.debtorAmount}} zł</h1>
+      </mat-card-title>
+    </mat-card-header>
+  </mat-card>
+</div>
+
+<form [formGroup]="contractor" novalidate (ngSubmit)="save(contractor.value, contractor.valid)">
+  <mat-card class="container">
+    <mat-card-header>
+      <mat-card-title>Dane kontrahenta</mat-card-title>
+    </mat-card-header>
+    <mat-card-content>
+      <mat-form-field class="form-field">
+        <input matInput placeholder="Nazwa firmy" formControlName="company" [errorStateMatcher]="matcher">
+        <mat-error *ngIf="contractor.controls['company'].hasError('required')">
+          Proszę wpisać nazwę firmy.
+        </mat-error>
+      </mat-form-field>
+
+      <mat-form-field class="form-field">
+        <input matInput placeholder="Numer nip" formControlName="nip" [errorStateMatcher]="matcher">
+        <mat-error *ngIf="contractor.controls['nip'].hasError('required')">
+          Proszę wpisać numer nip.
+        </mat-error>
+      </mat-form-field>
+
+      <mat-form-field class="form-field">
+        <input matInput placeholder="Ulica" formControlName="street" [errorStateMatcher]="matcher">
+        <mat-error *ngIf="contractor.controls['street'].hasError('required')">
+          Proszę wpisać ulicę.
+        </mat-error>
+      </mat-form-field>
+
+      <div class="max-width">
+        <mat-form-field class="parcel-field">
+          <input matInput placeholder="Numer domu" formControlName="parcelNo" [errorStateMatcher]="matcher">
+          <mat-error *ngIf="contractor.controls['parcelNo'].hasError('required')">
+            Proszę wpisać numer domu.
+          </mat-error>
+        </mat-form-field>
+
+        <label>/</label>
+
+        <mat-form-field class="home-field">
+          <input matInput placeholder="Numer mieszkania" formControlName="homeNo" [errorStateMatcher]="matcher">
+        </mat-form-field>
+      </div>
+      <div class="max-width">
+        <mat-form-field class="zip-field">
+          <input matInput placeholder="Kod pocztowy" formControlName="zip" [errorStateMatcher]="matcher">
+          <mat-error *ngIf="contractor.controls['zip'].hasError('required') || contractor.controls['zip'].hasError('minLength') || contractor.controls['zip'].hasError('maxLength')">
+            Proszę wpisać kod pocztowy w formie XX-XXX
+          </mat-error>
+        </mat-form-field>
+
+        <label>,</label>
+
+        <mat-form-field class="city-field">
+          <input matInput placeholder="Miasto" formControlName="city" [errorStateMatcher]="matcher">
+          <mat-error *ngIf="contractor.controls['city'].hasError('required')">
+            Proszę wpisać miasto.
+          </mat-error>
+        </mat-form-field>
+
+        <mat-form-field class="form-field">
+          <input matInput placeholder="Kraj" formControlName="country" [errorStateMatcher]="matcher">
+          <mat-error *ngIf="contractor.controls['country'].hasError('required')">
+            Proszę wpisać państwo.
+          </mat-error>
+        </mat-form-field>
+
+      </div>
+
+      <mat-form-field class="form-field">
+        <input matInput placeholder="Branża firmy" formControlName="trade">
+      </mat-form-field>
+
+      <mat-card-header>
+        <mat-card-title>Dane kontaktowe</mat-card-title>
+      </mat-card-header>
+
+      <mat-form-field class="form-field">
+        <input matInput placeholder="Imię przedstawiciela" formControlName="firstname">
+        <mat-error *ngIf="contractor.controls['firstname'].hasError('required')">
+          Proszę wpisać poprawne imię przedstawiciela.
+        </mat-error>
+      </mat-form-field>
+
+      <mat-form-field class="form-field">
+        <input matInput placeholder="Nazwisko przedstawiciela`" formControlName="surname">
+        <mat-error *ngIf="contractor.controls['surname'].hasError('required')">
+          Proszę wpisać poprawne nazwisko przedstawiciela.
+        </mat-error>
+      </mat-form-field>
+
+      <mat-form-field class="form-field">
+        <input matInput placeholder="Email" formControlName="email" [errorStateMatcher]="matcher">
+        <mat-error *ngIf="contractor.controls['email'].hasError('email') ||
+        contractor.controls['email'].hasError('pattern') || 
+        contractor.controls['email'].hasError('required')">
+          Proszę wpisać poprawny adres email.
+        </mat-error>
+      </mat-form-field>
+
+      <mat-form-field class="form-field">
+        <input matInput placeholder="Numer telefonu" formControlName="phone">
+      </mat-form-field>
+
+      <mat-card-header>
+        <mat-card-title>Konto bankowe firmy</mat-card-title>
+      </mat-card-header>
+
+      <div *ngIf="account" class="account-div">
+        <span>Konto w walucie: <b>{{ account.currency }}</b> o numerze <b>{{ account.accountNo }}</b> i kodzie swift <b>{{
+            account.swift }}</b></span>
+        <div>
+          <mat-icon mat-flat-button color="primary" type="button" matTooltip="Edytuj konto bankowe" (click)="edit()">edit</mat-icon>
+          <mat-icon mat-flat-button color="warn" type="button" matTooltip="Usuń konto bankowe" (click)="delete()">delete</mat-icon>
+        </div>
+      </div>
+      <div *ngIf="!account" class="account-div">
+        <button mat-raised-button color="primary" type="button" class="button max-width no-margin" (click)="newAccount()">Dodaj
+          nowe
+          konto</button>
+      </div>
+
+    </mat-card-content>
+    <mat-card-actions>
+      <div mat-dialog-actions class="submit-button">
+        <button mat-raised-button color="primary" [disabled]="!contractor.valid" type="submit">Zapisz</button>
+        <button mat-raised-button color="warn" [routerLink]="[ '/contractors']" type="button">Anuluj</button>
+      </div>
+    </mat-card-actions>
+  </mat-card>
+</form>

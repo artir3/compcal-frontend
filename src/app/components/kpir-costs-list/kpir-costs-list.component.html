@@ -1,0 +1,188 @@
+<h1 class="title" sticky>Księga przychodów i rozchodów - koszty
+    <hr>
+</h1>
+
+
+<form [formGroup]="kpirFilter" class="filter" novalidate (ngSubmit)="doFilter(kpirFilter.value)">
+    <mat-card class="filter-forms">
+        <mat-card-header>
+            <mat-card-title>Filtrowanie</mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+            <mat-form-field>
+                <mat-select placeholder="Wybierz rok rozliczeniowy" formControlName="selectedYear" (selectionChange)="changeYear()">
+                    <mat-option></mat-option>
+                    <mat-option *ngFor="let year of years" [value]="year">{{year}}</mat-option>
+                </mat-select>
+            </mat-form-field>
+
+            <mat-form-field>
+                <mat-select placeholder="Wybierz miesiąc rozliczeniowy" formControlName="selectedMonth">
+                    <mat-option *ngIf="checkSelectedYear()" [value]="null">wybierz najpierw rok</mat-option>
+                    <mat-option *ngIf="!checkSelectedYear()" [value]="null">-- anuluj --</mat-option>
+                    <mat-option *ngFor="let month of months" [value]="month.no">{{month.name}}</mat-option>
+                    <mat-option *ngIf="!checkSelectedYear()" [value]="null">-- anuluj --</mat-option>
+                </mat-select>
+            </mat-form-field>
+
+            <mat-form-field>
+                <input matInput [min]="economicEventMinDate" [max]="economicEventMaxDate" [matDatepicker]="economicEvent"
+                    placeholder="Data zdarzenia gospodarczego" formControlName="economicEventDate" (click)="economicEvent.open()">
+                <mat-datepicker-toggle matSuffix [for]="economicEvent"></mat-datepicker-toggle>
+                <mat-datepicker #economicEvent></mat-datepicker>
+            </mat-form-field>
+
+            <mat-form-field>
+                <input matInput placeholder="Nazwa kontrahenta" formControlName="company">
+            </mat-form-field>
+
+            <mat-form-field>
+                <input matInput placeholder="Nip kontrahenta" type="number" formControlName="nip">
+            </mat-form-field>
+
+            <mat-form-field>
+                <input matInput placeholder="Numer dowodu księgowego" formControlName="registrationNumber">
+            </mat-form-field>
+
+            <mat-checkbox formControlName="isPayed">Pokaź opłacone</mat-checkbox>
+            <mat-checkbox formControlName="notPayed">Pokaź nieopłacone</mat-checkbox>
+            <mat-checkbox formControlName="overdue">Pokaź po terminie płatności</mat-checkbox>
+        </mat-card-content>
+        <mat-card-actions>
+            <div mat-dialog-actions class="submit-button">
+                <button mat-raised-button color="primary" type="submit">Filtruj</button>
+            </div>
+        </mat-card-actions>
+    </mat-card>
+</form>
+
+
+<mat-card class="content">
+    <button mat-raised-button color="primary" class="button new-contractor-button" [routerLink]="['/kpir/costs/add']">Dodaj
+        ewidencję kosztów</button>
+    <table mat-table class="table" [dataSource]="dataSource" matSort>
+        <!-- 1 -->
+        <ng-container matColumnDef="idx">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header rowspan="2" >Lp.</th>
+            <td mat-cell  *matCellDef="let element">{{element.idx}}</td>
+            <td mat-footer-cell *matFooterCellDef></td>
+        </ng-container>
+        <!-- 2 -->
+        <ng-container matColumnDef="economicEventDate">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header rowspan="2" >Data<br>zdarzenia<br>gospodarczego</th>
+            <td mat-cell  *matCellDef="let element">{{element.economicEventDate | date: 'dd-MM-yyyy'}}</td>
+            <td mat-footer-cell *matFooterCellDef></td>
+        </ng-container>
+        <!-- 3 -->
+        <ng-container matColumnDef="registrationNumber">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header rowspan="2" >Numer<br>dowodu<br>księgowego</th>
+            <td mat-cell *matCellDef="let element">{{element.registrationNumber}}</td>
+            <td mat-footer-cell *matFooterCellDef></td>
+        </ng-container>
+        <!-- t1 -->
+        <ng-container matColumnDef="consumer">
+            <th mat-header-cell *matHeaderCellDef colspan="1" >kontrahent</th>
+        </ng-container>
+        <!-- 4 -->
+        <ng-container matColumnDef="fullName">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header class="text-headers" >imię i nazwisko (firma)<br>adres</th>
+            <td mat-cell *matCellDef="let element">{{element.fullName}}<br>{{element.address}}</td>
+            <td mat-footer-cell *matFooterCellDef></td>
+        </ng-container>
+        <!-- 6 -->
+        <!-- <ng-container matColumnDef="description">
+            <th mat-header-cell *matHeaderCellDef class="text-headers" rowspan="2" >Opis<br>zdarzenia<br>gospodarczego</th>
+            <td mat-cell *matCellDef="let element">{{element.description}}</td>
+            <td mat-footer-cell *matFooterCellDef> Suma bierzącej strony<br>
+                <hr>Razem od początku {{ getName() }}</td>
+        </ng-container> -->
+        <!-- 10 -->
+        <ng-container matColumnDef="purchaseCosts">
+            <th mat-header-cell *matHeaderCellDef rowspan="2" >Zakup<br>towarów<br>handlowych<br>i materiałów<br>handlowych<br>wg.
+                cen<br>zukupu</th>
+            <td mat-cell *matCellDef="let element" class="text-center">{{element.purchaseCosts | number:'.2-2'}}</td>
+            <td mat-footer-cell *matFooterCellDef class="text-center">{{getPagedPurchaseCosts() | number:'.2-2'}}<br>
+                <hr>{{getPurchaseCosts() | number:'.2-2'}}</td>
+        </ng-container>
+        <!-- 11 -->
+        <ng-container matColumnDef="purchaseSideCosts">
+            <th mat-header-cell *matHeaderCellDef rowspan="2" >Koszty<br>uboczne<br>zakupu</th>
+            <td mat-cell *matCellDef="let element" class="text-center">{{element.purchaseSideCosts | number:'.2-2'}}</td>
+            <td mat-footer-cell *matFooterCellDef class="text-center">{{getPagedPurchaseSideCosts() | number:'.2-2'}}<br>
+                <hr>{{getPurchaseSideCosts() | number:'.2-2'}}</td>
+        </ng-container>
+        <!-- t3 -->
+        <ng-container matColumnDef="costs">
+            <th mat-header-cell *matHeaderCellDef colspan="4" >Wydatki (Koszty)</th>
+        </ng-container>
+        <!-- 12 -->
+        <ng-container matColumnDef="paymentCost">
+            <th mat-header-cell *matHeaderCellDef >wynagrodzenie<br>w gotówce<br>i w naturze</th>
+            <td mat-cell *matCellDef="let element" class="text-center">{{element.paymentCost | number:'.2-2'}}</td>
+            <td mat-footer-cell *matFooterCellDef class="text-center">{{getPagedPaymnetCost() | number:'.2-2'}}<br>
+                <hr>{{getPaymnetCost() | number:'.2-2'}}</td>
+        </ng-container>
+        <!-- 13 -->
+        <ng-container matColumnDef="otherCosts">
+            <th mat-header-cell *matHeaderCellDef >pozostałe<br>wydatki</th>
+            <td mat-cell *matCellDef="let element" class="text-center">{{element.otherCosts | number:'.2-2'}}</td>
+            <td mat-footer-cell *matFooterCellDef class="text-center">{{getPagedOtherCosts() | number:'.2-2'}}<br>
+                <hr>{{getOtherCosts() | number:'.2-2'}}</td>
+        </ng-container>
+        <!-- 14 -->
+        <ng-container matColumnDef="sumCosts">
+            <th mat-header-cell *matHeaderCellDef >wydatki<br>razem</th>
+            <td mat-cell *matCellDef="let element" class="text-center">{{element.sumCosts | number:'.2-2'}}</td>
+            <td mat-footer-cell *matFooterCellDef class="text-center">{{getPagedSumCosts() | number:'.2-2'}}<br>
+                <hr>{{getSumCosts() | number:'.2-2'}}</td>
+        </ng-container>
+        <!-- 15 -->
+        <ng-container matColumnDef="other">
+            <th mat-header-cell *matHeaderCellDef >różne</th>
+            <td mat-cell *matCellDef="let element" class="text-center">{{element.other | number:'.2-2'}}</td>
+            <td mat-footer-cell *matFooterCellDef class="text-center">{{getPagedOther() | number:'.2-2'}}<br>
+                <hr>{{getOther() | number:'.2-2'}}</td>
+        </ng-container>
+        <!-- t3 -->
+        <ng-container matColumnDef="costsRad">
+            <th mat-header-cell *matHeaderCellDef colspan="1" >Koszty działalności<br>badawczo-rozwojowej<br>o których
+                mowa w
+                art. 26c<br>ustawy o podatku dochodowym</th>
+        </ng-container>
+        <!-- 16 -->
+<!--         <ng-container matColumnDef="radDescription">
+            <th mat-header-cell *matHeaderCellDef >opis kosztu</th>
+            <td mat-cell *matCellDef="let element" class="text-headers-mid">{{element.radDescription}}</td>
+            <td mat-footer-cell *matFooterCellDef><br>
+                <hr><br></td>
+        </ng-container> -->
+        <ng-container matColumnDef="radCost">
+            <th mat-header-cell *matHeaderCellDef >wartość</th>
+            <td mat-cell *matCellDef="let element" class="text-center">{{element.radCosts | number:'.2-2'}}</td>
+            <td mat-footer-cell *matFooterCellDef class="text-center">{{getPagedRadCosts() | number:'.2-2'}}<br>
+                <hr>{{getRadCosts() | number:'.2-2'}}</td>
+        </ng-container>
+        <!-- 17 -->
+        <!--<ng-container matColumnDef="comments">
+            <th mat-header-cell *matHeaderCellDef class="text-headers" rowspan="2" >Uwagi</th>
+            <td mat-cell *matCellDef="let element">{{element.comments}}</td>
+            <td mat-footer-cell *matFooterCellDef></td>
+        </ng-container> -->
+        <!-- akcje -->
+        <ng-container matColumnDef="actions">
+            <th mat-header-cell *matHeaderCellDef rowspan="2">Akcje</th>
+            <td style="background-color: white;" mat-cell *matCellDef="let element" class="text-center">
+                <mat-icon mat-flat-button color="primary" matTooltip="Edytuj rozchód" (click)="edit(element)">edit</mat-icon>
+                <mat-icon mat-flat-button color="warn" matTooltip="Usuń rozchód" (click)="delete(element)">delete</mat-icon>
+            </td>
+            <td mat-footer-cell *matFooterCellDef></td>
+        </ng-container>
+
+        <tr mat-header-row *matHeaderRowDef="headerFirstLine sticky: true"></tr>
+        <tr mat-header-row *matHeaderRowDef="headerSecondLine sticky: true"></tr>
+        <tr mat-row [class.payed]="element.payed" [class.our-overdue]="element.overduePayment" [class.deleted]="element.type=='DELETED'" *matRowDef="let element; columns: columns;"></tr>
+        <tr mat-footer-row *matFooterRowDef="columns; sticky: true"></tr>
+    </table>
+
+    <mat-paginator #paginator [pageSizeOptions]="[5, 10, 25, 100]"></mat-paginator>
+</mat-card>
