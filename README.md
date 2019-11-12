@@ -2,7 +2,7 @@
 
 This aplication was writen to engenering work during studies at Computer Science at the Wrocław University of Technology.
 
-# This repository was moved from privete to public 
+This is a angular frontend to compcal-backend backend writen in java.
 
 ### Development server
 
